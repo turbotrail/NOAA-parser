@@ -1,2 +1,7 @@
 requests
 beautifulsoup4
+pandas
+matplotlib
+xarray
+netCDF4
+dask
