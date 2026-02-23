@@ -2,8 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-OBSERVATORY_ID="GUA"
-CSV_FILE =f"data{OBSERVATORY_ID}_2025-11-09T00:00:00Z_2026-02-16T00:00:00Z.csv" #"data.csv"
+OBSERVATORY_ID="CMO"
+CSV_FILE =f"./ground/data{OBSERVATORY_ID}_2026-01-18T00:00:00Z_2026-01-23T00:00:00Z.csv" #"data.csv"
 
 
 
@@ -75,3 +75,6 @@ plt.axhline(0, color="black", alpha=0.3)
 plt.title(OBSERVATORY_ID+" dX/dt (GIC-relevant signal)")
 plt.ylabel("nT/s")
 plt.show()
+
+
+df.to_pickle(f"./ground/data.pkl")

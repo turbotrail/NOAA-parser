@@ -40,17 +40,10 @@ df_all["B_mag"] = np.sqrt(
     df_all["Bz_GSM"]**2
 )
 
-# dB/dt (nT/min)
-df_all["dBx_dt"] = df_all["Bx_GSM"].diff()
-df_all["dBy_dt"] = df_all["By_GSM"].diff()
-df_all["dBz_dt"] = df_all["Bz_GSM"].diff()
+# Signed d|B|/dt (nT/min) — aligns with Aditya-L1 and ground dX/dt sign
+df_all["dBdt"] = df_all["B_mag"].diff()
 
-df_all["dBdt"] = np.sqrt(
-    df_all["dBx_dt"]**2 +
-    df_all["dBy_dt"]**2 +
-    df_all["dBz_dt"]**2
-)
-
+print(df_all.describe())
 # =========================
 # PLOTTING
 # =========================
@@ -90,3 +83,5 @@ df_all.reset_index().to_csv(
 )
 
 print("📊 Plot complete.")
+
+df_all.to_pickle("./goes_mag/data.pkl")

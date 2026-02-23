@@ -17,8 +17,8 @@ BASE_URL = "https://geomag.usgs.gov/ws/data/"
 # =========================
 OBSERVATORY_ID = "CMO"
 
-START_TIME = "2025-11-09T00:00:00Z"
-END_TIME   = "2026-02-16T00:00:00Z"
+START_TIME = "2026-01-18T00:00:00Z"
+END_TIME   = "2026-01-23T00:00:00Z"
 
 ELEMENTS = ["X", "Y", "Z", "F"]   # magnetic field components
 SAMPLING_PERIOD = 60             # seconds
@@ -53,10 +53,10 @@ response.raise_for_status()
 data = response.text 
 if FORMAT == "json":
     data = json.loads(data) # iaga2002 is text-based
-    with open(f"data{OBSERVATORY_ID}_{START_TIME}_{END_TIME}.txt", "w") as f:
+    with open(f"./ground/data{OBSERVATORY_ID}_{START_TIME}_{END_TIME}.txt", "w") as f:
         f.write(data)
 else:
-    with open(f"data{OBSERVATORY_ID}_{START_TIME}_{END_TIME}.txt", "w") as f:
+    with open(f"./ground/data{OBSERVATORY_ID}_{START_TIME}_{END_TIME}.txt", "w") as f:
         f.write(data)
 
 

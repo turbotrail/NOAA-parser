@@ -2,7 +2,7 @@ import xarray as xr
 from pathlib import Path
 
 # Path to ONE NetCDF file
-nc_file = Path("goes19-mps/ops_seis-l1b-mpsl_g19_d20260118_v0-0-0.nc")
+nc_file = Path("aditya-l1/L1_MAG91N18P1AL10000809024026019040426958_N00_0000_000761_V00.nc")
 
 ds = xr.open_dataset(nc_file)
 
@@ -21,3 +21,4 @@ for dim, size in ds.dims.items():
 print("\n=== GLOBAL ATTRIBUTES ===")
 for k, v in ds.attrs.items():
     print(f"{k}: {v}")
+
