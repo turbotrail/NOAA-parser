@@ -1,0 +1,11 @@
+[project]
+name = "mag-data"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "influxdb-client>=1.50.0",
+    "matplotlib>=3.11.0",
+    "pandas>=3.0.3",
+]
