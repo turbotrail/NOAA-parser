@@ -12,7 +12,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-
+import argparse
+import sys
 import os
 
 def fast_load_shcfile(filepath, leap_year=None, comment=None):
@@ -132,11 +133,17 @@ lon_min, lon_max = 65, 100
 theta = np.linspace(90 - lat_max, 90 - lat_min, 400) # 50 to 85
 phi = np.linspace(lon_min, lon_max, 400)             # 65 to 100
 
-nmax = parameters['nmax']
-nmin = parameters['nmin']
+# Parse command line arguments
+parser = argparse.ArgumentParser(description="Plot 2E crustal map over India")
+parser.add_argument('--nmin', type=int, default=None, help='Minimum degree (default: from shc file, usually 16)')
+parser.add_argument('--nmax', type=int, default=None, help='Maximum degree (default: from shc file, usually 1500)')
+args = parser.parse_args()
+
+nmax = args.nmax if args.nmax is not None else parameters['nmax']
+nmin = args.nmin if args.nmin is not None else parameters['nmin']
 
 # Evaluate field using chaosmagpy with grid=True (ultra fast for large max_degree)
-print(f"Synthesizing magnetic field up to degree {nmax} over India... please wait.")
+print(f"Synthesizing magnetic field from degree {nmin} up to degree {nmax} over India... please wait.")
 B_radius = fast_synth_radius_only(coeffs, 6371.2, theta, phi, nmax=nmax, nmin=nmin)
 
 # Vertical component anomaly (Z = -B_radius)
@@ -149,7 +156,9 @@ fig = plt.figure(figsize=(10, 10))
 ax = plt.axes(projection=ccrs.PlateCarree())
 # Plot Z component using contourf first (so features are drawn on top)
 print("Plotting the high resolution data...")
-levels = np.linspace(-300, 300, 100)
+vmax = np.max(np.abs(Z))
+# Add a small buffer to vmax so the contour covers all data
+levels = np.linspace(-vmax * 1.05, vmax * 1.05, 100)
 pcm = ax.contourf(phi_grid, 90 - theta_grid, Z, levels=levels, 
                   transform=ccrs.PlateCarree(), cmap='RdBu_r', extend='both')
 
@@ -163,9 +172,10 @@ gl.top_labels = False
 gl.right_labels = False
 
 cbar = plt.colorbar(pcm, ax=ax, orientation='horizontal', shrink=0.8, pad=0.05)
-cbar.set_label('Radial Magnetic Field Anomaly Z (nT)')
-plt.title('Lithospheric Magnetic Field Over India\n(Swarm 2E High-Res Model, n=16 to 1500)', pad=20)
+cbar.set_label(f'Radial Magnetic Field Anomaly Z (nT) {nmin}_{nmax} ')
+plt.title(f'Lithospheric Magnetic Field Over India\n(Swarm 2E Model, n={nmin} to {nmax})\nAmplitude Range: {np.min(Z):.1f} nT to {np.max(Z):.1f} nT', pad=20)
 
-# Save the figure (removed bbox_inches='tight' to avoid map collapse)
-plt.savefig('india_crustal_map_2E.png', dpi=300)
-print("Map saved to india_crustal_map_2E.png")
+# Save the figure dynamically based on the degree range
+output_file = f'india_crustal_map_2E_{nmin}_{nmax}.png'
+plt.savefig(output_file, dpi=300)
+print(f"Map saved to {output_file}")
